@@ -19,6 +19,10 @@ DEBUG=False
 
 class PaginatePlugin(BasePlugin):
 
+    config_scheme = (
+        ('max_items', mkdocs.config.config_options.Type(int, default=6))
+    )
+
     def do_paginate(self, items, **kwargs):
         if DEBUG:
             print("------------")
