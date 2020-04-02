@@ -6,4 +6,4 @@ clean:
 	- rm -rf dist
 
 push:
-	twine upload ./dist
+	twine upload dist/*
