@@ -48,7 +48,7 @@ class PaginatePlugin(BasePlugin):
         return out_items
 
     def on_config(self, config):
-        self.max_items = config.get('max_items', 6)
+        self.max_items = self.config.get('max_items', 6)
 
     def on_env(self, env, config, files):
         self.config = config
