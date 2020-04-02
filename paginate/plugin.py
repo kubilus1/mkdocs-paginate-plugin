@@ -11,17 +11,13 @@ from mkdocs.structure.pages import Page
 from mkdocs.structure.files import File
 from mkdocs.structure.nav import Section
 from mkdocs.commands.build import _build_page
-
+from mkdocs.config.config_options import Type
 
 log = logging.getLogger(__name__)
 
 DEBUG=False
 
 class PaginatePlugin(BasePlugin):
-
-    config_scheme = (
-        ('max_items', mkdocs.config.config_options.Type(int, default=6))
-    )
 
     def do_paginate(self, items, **kwargs):
         if DEBUG:
