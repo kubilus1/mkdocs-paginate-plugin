@@ -16,7 +16,7 @@ from mkdocs.config.config_options import Type
 
 log = logging.getLogger(__name__)
 
-DEBUG=True
+DEBUG=False
 
 class PaginatePlugin(BasePlugin):
 
