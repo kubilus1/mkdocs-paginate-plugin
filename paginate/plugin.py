@@ -1,6 +1,7 @@
 import os
 import sys
 import copy
+import math
 import shutil
 import logging
 
@@ -26,7 +27,7 @@ class PaginatePlugin(BasePlugin):
             print(items)
             print(kwargs)
             print("NUMPAGES: ", self.num_pages)
-            
+        
         page = kwargs.get('page')
 
         if hasattr(page, 'page_num'):
@@ -54,22 +55,25 @@ class PaginatePlugin(BasePlugin):
         return env
 
     def on_nav(self, nav, config, files):
+        # Build out the navigation structure
+
         if DEBUG: 
             print("------------")
             print("on_nav")
             print(nav)
-        num_items = len(nav.pages)
-        num_pages = num_items / self.max_items
-        if num_items % self.max_items:
-            num_pages += 1
-
-        self.num_pages = int(num_pages)
+        
+        num_items = len([ x for x in nav.pages if not x.is_homepage ])
+        self.num_pages = math.ceil(num_items/self.max_items)            
 
         homepage = None
         for page in nav.pages:
             if page.is_homepage:
                 page.page_num = 1
                 homepage = page
+                
+                if self.num_pages == 1:
+                    # Homepage is the last page
+                    page.last_page = True
 
                 for i in range(1, self.num_pages):
                     # i+1 since we want to start with page2, etc.
@@ -80,25 +84,28 @@ class PaginatePlugin(BasePlugin):
                         dest_dir = homepage.file.abs_dest_path.rstrip(homepage.file.dest_path),
                         use_directory_urls = True
                     )
+
                     newfile.abs_dest_path = os.path.join(
                         newfile.abs_dest_path.rstrip(newfile.dest_path),
                         "page",
                         str(new_pagenum),
                         "index.html"
                     )
-                    newfile.url = "page/%s/" % new_pagenum
+                    newfile.url = f"page/{new_pagenum}/"
                     newpage = Page(
-                        title='page%s' % new_pagenum,
+                        title=f"page{new_pagenum}",
                         file=newfile,
                         config=config
                     )
                     newpage.page_num = new_pagenum
                     newpage.generated = True
+
                     if i == (self.num_pages-1):
                         newpage.last_page = True
 
                     nav.pages.append(newpage)
                     nav.items.append(newpage)
                     files.append(newfile)
+
 
         return nav
